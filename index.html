@@ -6,22 +6,12 @@
     <title>Настройки фильтров</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-      :root {
-        /* defaults for dark */
-        --bg: #0f1115;
-        --card: #151a23;
-        --muted: #8ea0b3;
-        --text: #e6edf3;
-        --accent: #2ea043;
-        --accent-2: #1f6feb;
-        --border: #2b3240;
-      }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        background: var(--bg);
-        color: var(--text);
+        background: var(--tg-theme-bg-color, #ffffff);
+        color: var(--tg-theme-text-color, #1f2328);
       }
       .container {
         max-width: 720px;
@@ -29,8 +19,8 @@
         padding: 16px;
       }
       .card {
-        background: var(--card);
-        border: 1px solid var(--border);
+        background: var(--tg-theme-secondary-bg-color, #f7f8fa);
+        border: 1px solid var(--tg-theme-hint-color, #e5e7eb);
         border-radius: 12px;
         padding: 16px;
       }
@@ -42,20 +32,20 @@
       .section h2 {
         font-size: 15px;
         margin: 0 0 8px;
-        color: var(--muted);
+        color: var(--tg-theme-hint-color, #6b7280);
         font-weight: 600;
       }
       .group { display: grid; gap: 8px; }
       .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
       .chip {
         display: inline-flex; align-items: center; gap: 8px;
-        padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px;
-        background: var(--bg);
+        padding: 8px 12px; border: 1px solid var(--tg-theme-hint-color, #e5e7eb); border-radius: 10px;
+        background: var(--tg-theme-bg-color, #ffffff);
       }
       input[type="number"], select, input[type="text"] {
-        background: var(--bg);
-        border: 1px solid var(--border);
-        color: var(--text);
+        background: var(--tg-theme-bg-color, #ffffff);
+        border: 1px solid var(--tg-theme-hint-color, #e5e7eb);
+        color: var(--tg-theme-text-color, #1f2328);
         border-radius: 8px;
         padding: 10px 12px;
         width: 100%;
@@ -68,13 +58,13 @@
         appearance: none; border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer;
         font-weight: 600;
       }
-      .btn-primary { background: var(--accent-2); color: white; }
-      .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+      .btn-primary { background: var(--tg-theme-button-color, #1f6feb); color: var(--tg-theme-button-text-color, #ffffff); }
+      .btn-secondary { background: transparent; color: var(--tg-theme-text-color, #1f2328); border: 1px solid var(--tg-theme-hint-color, #e5e7eb); }
       label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
       .checkboxes { display: grid; gap: 8px; }
       .scroll {
-        max-height: 200px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; padding: 8px;
-        background: var(--bg);
+        max-height: 200px; overflow: auto; border: 1px solid var(--tg-theme-hint-color, #e5e7eb); border-radius: 10px; padding: 8px;
+        background: var(--tg-theme-bg-color, #ffffff);
       }
     </style>
   </head>
@@ -142,31 +132,9 @@
     <script>
       const tg = window.Telegram?.WebApp;
       if (tg) {
+        tg.ready();
         tg.expand();
       }
-
-      function applyTheme(tp = {}, scheme = 'dark') {
-        const root = document.documentElement;
-        const isLight = scheme === 'light';
-        const get = (k, fb) => (tp && tp[k] ? `#${tp[k]}` : fb);
-        root.style.setProperty('--bg', get('bg_color', isLight ? '#ffffff' : '#0f1115'));
-        root.style.setProperty('--card', get('secondary_bg_color', isLight ? '#f7f8fa' : '#151a23'));
-        root.style.setProperty('--text', get('text_color', isLight ? '#1f2328' : '#e6edf3'));
-        root.style.setProperty('--muted', get('hint_color', isLight ? '#6b7280' : '#8ea0b3'));
-        root.style.setProperty('--accent-2', get('link_color', '#1f6feb'));
-        root.style.setProperty('--border', isLight ? '#e5e7eb' : '#2b3240');
-        document.body.style.background = get('bg_color', isLight ? '#ffffff' : '#0f1115');
-        document.body.style.color = get('text_color', isLight ? '#1f2328' : '#e6edf3');
-      }
-
-      // Инициализация темы при загрузке
-      const initialScheme = tg?.colorScheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-      applyTheme(tg?.themeParams || {}, initialScheme);
-
-      // Реакция на смену темы в Telegram
-      tg?.onEvent('themeChanged', () => {
-        applyTheme(tg.themeParams || {}, tg.colorScheme || 'dark');
-      });
 
       document.getElementById('resetBtn').addEventListener('click', () => {
         document.querySelector('input[name="type"][value="any"]').checked = true;
