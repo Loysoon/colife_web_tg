@@ -66,6 +66,11 @@
         max-height: 200px; overflow: auto; border: 1px solid var(--tg-theme-hint-color, #e5e7eb); border-radius: 10px; padding: 8px;
         background: var(--tg-theme-bg-color, #ffffff);
       }
+      /* Подсветка ошибок */
+      .input-error {
+        border-color: #e74c3c !important;
+        background: rgba(231, 76, 60, 0.08) !important;
+      }
     </style>
   </head>
   <body>
@@ -90,20 +95,20 @@
         <div class="section">
           <h2>Цена, ₽</h2>
           <div class="grid-2">
-            <input type="number" id="price_min" placeholder="От" min="0" />
-            <input type="number" id="price_max" placeholder="До" min="0" />
+            <input type="number" id="price_min" placeholder="От" min="1" step="1" />
+            <input type="number" id="price_max" placeholder="До" min="1" step="1" />
           </div>
         </div>
 
         <div class="section">
           <h2>Удаленность от кольцевой линии</h2>
           <div class="row">
-            <label class="chip"><input type="radio" name="ring" value="1" /> 1</label>
-            <label class="chip"><input type="radio" name="ring" value="2" /> 2</label>
-            <label class="chip"><input type="radio" name="ring" value="3" /> 3</label>
-            <label class="chip"><input type="radio" name="ring" value="4" /> 4</label>
-            <label class="chip"><input type="radio" name="ring" value="6" /> 6</label>
-            <label class="chip"><input type="radio" name="ring" value="inside" /> Внутри кольца</label>
+            <label class="chip"><input type="checkbox" name="ring" value="1" /> 1</label>
+            <label class="chip"><input type="checkbox" name="ring" value="2" /> 2</label>
+            <label class="chip"><input type="checkbox" name="ring" value="3" /> 3</label>
+            <label class="chip"><input type="checkbox" name="ring" value="4" /> 4</label>
+            <label class="chip"><input type="checkbox" name="ring" value="6" /> 6</label>
+            <label class="chip"><input type="checkbox" name="ring" value="inside" /> Внутри кольца</label>
           </div>
         </div>
 
@@ -145,6 +150,11 @@
       });
 
       document.getElementById('saveBtn').addEventListener('click', () => {
+        // Блокируем сохранение при логической ошибке цены
+        if (!isPriceRangeValid()) {
+          alert('Проверьте поля цены: "До" не может быть меньше "От"');
+          return;
+        }
         // Заглушка: просто уведомление и вывод в консоль
         const payload = collectPayload();
         console.log('Filters payload:', payload);
@@ -154,13 +164,63 @@
         }
       });
 
+      // Валидация цен: запрещаем 0/отрицательные и подсвечиваем логическую ошибку (от > до)
+      const priceMinEl = document.getElementById('price_min');
+      const priceMaxEl = document.getElementById('price_max');
+
+      function clampPositive(el) {
+        const v = parseInt(el.value, 10);
+        if (isNaN(v) || v <= 0) {
+          el.classList.add('input-error');
+        } else {
+          el.classList.remove('input-error');
+        }
+      }
+
+      function validateRange() {
+        const vMin = parseInt(priceMinEl.value, 10);
+        const vMax = parseInt(priceMaxEl.value, 10);
+        // убираем прошлую подсветку
+        priceMinEl.classList.remove('input-error');
+        priceMaxEl.classList.remove('input-error');
+        // если введены оба и логика нарушена — подсветить оба
+        if (!isNaN(vMin) && !isNaN(vMax) && vMax < vMin) {
+          priceMinEl.classList.add('input-error');
+          priceMaxEl.classList.add('input-error');
+        }
+      }
+
+      function isPriceRangeValid() {
+        const vMin = parseInt(priceMinEl.value, 10);
+        const vMax = parseInt(priceMaxEl.value, 10);
+        // Пустые поля считаем валидными (нет фильтра) — проверяем только если оба заданы
+        if (isNaN(vMin) && isNaN(vMax)) return true;
+        if (!isNaN(vMin) && vMin <= 0) return false;
+        if (!isNaN(vMax) && vMax <= 0) return false;
+        if (!isNaN(vMin) && !isNaN(vMax) && vMax < vMin) return false;
+        return true;
+      }
+
+      function cleanupOnBlur(el) {
+        const v = parseInt(el.value, 10);
+        if (isNaN(v) || v <= 0) {
+          el.value = '';
+          el.classList.remove('input-error');
+        }
+      }
+
+      priceMinEl.addEventListener('input', () => { clampPositive(priceMinEl); validateRange(); });
+      priceMaxEl.addEventListener('input', () => { clampPositive(priceMaxEl); validateRange(); });
+      priceMinEl.addEventListener('blur', () => { cleanupOnBlur(priceMinEl); validateRange(); });
+      priceMaxEl.addEventListener('blur', () => { cleanupOnBlur(priceMaxEl); validateRange(); });
+
       function collectPayload() {
         const type = document.querySelector('input[name="type"]:checked')?.value || 'any';
         const price_min = Number(document.getElementById('price_min').value || 0);
         const price_max = Number(document.getElementById('price_max').value || 0);
-        const ring = document.querySelector('input[name="ring"]:checked')?.value || null;
+        const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => i.value);
         const metros = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value);
-        return { type, price_min, price_max, ring, metros };
+        return { type, price_min, price_max, rings, metros };
       }
     </script>
   </body>
