@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Настройки фильтров</title>
+    <style>
+      :root {
+        /* defaults for dark */
+        --bg: #0f1115;
+        --card: #151a23;
+        --muted: #8ea0b3;
+        --text: #e6edf3;
+        --accent: #2ea043;
+        --accent-2: #1f6feb;
+        --border: #2b3240;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: var(--bg);
+        color: var(--text);
+      }
+      .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0 0 12px;
+      }
+      .section { margin-top: 16px; }
+      .section h2 {
+        font-size: 15px;
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .group { display: grid; gap: 8px; }
+      .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px;
+        background: #0f1420;
+      }
+      input[type="number"], select, input[type="text"] {
+        background: #0f1420;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 8px;
+        padding: 10px 12px;
+        width: 100%;
+      }
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .grid-2, .grid-3 { width: 100%; }
+      .actions { display: flex; gap: 10px; margin-top: 20px; }
+      button {
+        appearance: none; border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-primary { background: var(--accent-2); color: white; }
+      .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+      label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+      .checkboxes { display: grid; gap: 8px; }
+      .scroll {
+        max-height: 200px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; padding: 8px;
+        background: #0f1420;
+      }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Настройки фильтров</h1>
+
+        <div class="section">
+          <h2>Тип жилья</h2>
+          <div class="group">
+            <label class="chip"><input type="radio" name="type" value="any" checked /> Любое</label>
+            <div class="row">
+              <label class="chip"><input type="radio" name="type" value="flat" /> Квартира</label>
+              <label class="chip"><input type="radio" name="type" value="room" /> Комната</label>
+              <label class="chip"><input type="radio" name="type" value="unit" /> Номер</label>
+              <label class="chip"><input type="radio" name="type" value="flat1" /> Однокомнатная квартира</label>
+              <label class="chip"><input type="radio" name="type" value="bed" /> Спальное место</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Цена, ₽</h2>
+          <div class="grid-2">
+            <input type="number" id="price_min" placeholder="От" min="0" />
+            <input type="number" id="price_max" placeholder="До" min="0" />
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Удаленность от кольцевой линии</h2>
+          <div class="row">
+            <label class="chip"><input type="radio" name="ring" value="1" /> 1</label>
+            <label class="chip"><input type="radio" name="ring" value="2" /> 2</label>
+            <label class="chip"><input type="radio" name="ring" value="3" /> 3</label>
+            <label class="chip"><input type="radio" name="ring" value="4" /> 4</label>
+            <label class="chip"><input type="radio" name="ring" value="6" /> 6</label>
+            <label class="chip"><input type="radio" name="ring" value="inside" /> Внутри кольца</label>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Линия метро</h2>
+          <div class="scroll checkboxes">
+            <label><input type="checkbox" value="arbatsko_pokrovskaya" /> Арбатско-Покровская (Синяя)</label>
+            <label><input type="checkbox" value="bolshaya_koltsevaya" /> Большая кольцевая (Бирюзовая)</label>
+            <label><input type="checkbox" value="zamoskvoretskaya" /> Замоскворецкая (Зеленая)</label>
+            <label><input type="checkbox" value="koltsevaya" /> Кольцевая</label>
+            <label><input type="checkbox" value="lyublinsko_dmitrovskaya" /> Люблинско-Дмитровская (Салатовая)</label>
+            <label><input type="checkbox" value="mcc" /> МЦК</label>
+            <label><input type="checkbox" value="sokolnicheskaya" /> Сокольническая (Красная)</label>
+            <label><input type="checkbox" value="tagansko_krasnopresnenskaya" /> Таганско-Краснопресненская (Сиреневая)</label>
+            <label><input type="checkbox" value="filevskaya" /> Филевская (Голубая)</label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="saveBtn">Сохранить</button>
+          <button class="btn-secondary" id="resetBtn">Сбросить</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const tg = window.Telegram?.WebApp;
+      if (tg) {
+        tg.expand();
+      }
+
+      function applyTheme(themeParams = {}, scheme = 'dark') {
+        const root = document.documentElement;
+        // Fallback palettes
+        const dark = {
+          bg: '#0f1115', card: '#151a23', text: '#e6edf3', muted: '#8ea0b3',
+          border: '#2b3240', accent2: '#1f6feb'
+        };
+        const light = {
+          bg: '#ffffff', card: '#f7f8fa', text: '#1f2328', muted: '#6b7280',
+          border: '#e5e7eb', accent2: '#1f6feb'
+        };
+
+        const base = scheme === 'light' ? light : dark;
+
+        // Map Telegram theme params → CSS vars (if provided by client)
+        // See https://core.telegram.org/bots/webapps#themeparams
+        const get = (key, fallback) => (themeParams?.[key] ? `#${themeParams[key]}` : fallback);
+
+        root.style.setProperty('--bg', get('bg_color', base.bg));
+        root.style.setProperty('--card', get('secondary_bg_color', base.card));
+        root.style.setProperty('--text', get('text_color', base.text));
+        root.style.setProperty('--muted', get('hint_color', base.muted));
+        root.style.setProperty('--accent-2', get('link_color', base.accent2));
+        // Border не приходит напрямую — подберем оттенок из bg
+        const border = scheme === 'light' ? '#e5e7eb' : '#2b3240';
+        root.style.setProperty('--border', border);
+
+        // Применим фон/текст к body (на случай, если стили не все перекрыты)
+        document.body.style.background = get('bg_color', base.bg);
+        document.body.style.color = get('text_color', base.text);
+      }
+
+      // Инициализация темы при загрузке
+      const initialScheme = tg?.colorScheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      applyTheme(tg?.themeParams || {}, initialScheme);
+
+      // Реакция на смену темы в Telegram
+      tg?.onEvent('themeChanged', () => {
+        applyTheme(tg.themeParams || {}, tg.colorScheme || 'dark');
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        document.querySelector('input[name="type"][value="any"]').checked = true;
+        document.getElementById('price_min').value = '';
+        document.getElementById('price_max').value = '';
+        document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
+        document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+      });
+
+      document.getElementById('saveBtn').addEventListener('click', () => {
+        // Заглушка: просто уведомление и вывод в консоль
+        const payload = collectPayload();
+        console.log('Filters payload:', payload);
+        alert('Фильтры сохранены (заглушка).');
+        if (tg) {
+          tg.close();
+        }
+      });
+
+      function collectPayload() {
+        const type = document.querySelector('input[name="type"]:checked')?.value || 'any';
+        const price_min = Number(document.getElementById('price_min').value || 0);
+        const price_max = Number(document.getElementById('price_max').value || 0);
+        const ring = document.querySelector('input[name="ring"]:checked')?.value || null;
+        const metros = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value);
+        return { type, price_min, price_max, ring, metros };
+      }
+    </script>
+  </body>
+  </html>
+
+
