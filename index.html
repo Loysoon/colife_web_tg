@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Настройки фильтров</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
       :root {
         /* defaults for dark */
@@ -76,7 +77,6 @@
         background: var(--bg);
       }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
     <div class="container">
@@ -145,36 +145,18 @@
         tg.expand();
       }
 
-      function applyTheme(themeParams = {}, scheme = 'dark') {
+      function applyTheme(tp = {}, scheme = 'dark') {
         const root = document.documentElement;
-        // Fallback palettes
-        const dark = {
-          bg: '#0f1115', card: '#151a23', text: '#e6edf3', muted: '#8ea0b3',
-          border: '#2b3240', accent2: '#1f6feb'
-        };
-        const light = {
-          bg: '#ffffff', card: '#f7f8fa', text: '#1f2328', muted: '#6b7280',
-          border: '#e5e7eb', accent2: '#1f6feb'
-        };
-
-        const base = scheme === 'light' ? light : dark;
-
-        // Map Telegram theme params → CSS vars (if provided by client)
-        // See https://core.telegram.org/bots/webapps#themeparams
-        const get = (key, fallback) => (themeParams?.[key] ? `#${themeParams[key]}` : fallback);
-
-        root.style.setProperty('--bg', get('bg_color', base.bg));
-        root.style.setProperty('--card', get('secondary_bg_color', base.card));
-        root.style.setProperty('--text', get('text_color', base.text));
-        root.style.setProperty('--muted', get('hint_color', base.muted));
-        root.style.setProperty('--accent-2', get('link_color', base.accent2));
-        // Border не приходит напрямую — подберем оттенок из bg
-        const border = scheme === 'light' ? '#e5e7eb' : '#2b3240';
-        root.style.setProperty('--border', border);
-
-        // Применим фон/текст к body (на случай, если стили не все перекрыты)
-        document.body.style.background = get('bg_color', base.bg);
-        document.body.style.color = get('text_color', base.text);
+        const isLight = scheme === 'light';
+        const get = (k, fb) => (tp && tp[k] ? `#${tp[k]}` : fb);
+        root.style.setProperty('--bg', get('bg_color', isLight ? '#ffffff' : '#0f1115'));
+        root.style.setProperty('--card', get('secondary_bg_color', isLight ? '#f7f8fa' : '#151a23'));
+        root.style.setProperty('--text', get('text_color', isLight ? '#1f2328' : '#e6edf3'));
+        root.style.setProperty('--muted', get('hint_color', isLight ? '#6b7280' : '#8ea0b3'));
+        root.style.setProperty('--accent-2', get('link_color', '#1f6feb'));
+        root.style.setProperty('--border', isLight ? '#e5e7eb' : '#2b3240');
+        document.body.style.background = get('bg_color', isLight ? '#ffffff' : '#0f1115');
+        document.body.style.color = get('text_color', isLight ? '#1f2328' : '#e6edf3');
       }
 
       // Инициализация темы при загрузке
