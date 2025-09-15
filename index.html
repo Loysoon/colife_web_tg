@@ -172,10 +172,16 @@
         // Заглушка: просто уведомление и вывод в консоль
         const payload = collectPayload();
         console.log('Filters payload:', payload);
-        alert('Фильтры сохранены (заглушка).');
-        if (tg) {
-          tg.close();
+        try {
+          if (tg?.sendData) {
+            tg.sendData(JSON.stringify(payload));
+          }
+          alert('Фильтры отправлены в бота.');
+        } catch (e) {
+          console.error('sendData error', e);
+          alert('Не удалось отправить данные в бота');
         }
+        if (tg) tg.close();
       });
 
       // Валидация цен: запрещаем 0/отрицательные и подсвечиваем логическую ошибку (от > до)
