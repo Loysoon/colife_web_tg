@@ -82,13 +82,13 @@
         <div class="section">
           <h2>Тип жилья</h2>
           <div class="group">
-            <label class="chip"><input type="radio" name="type" value="any" checked /> Любое</label>
+            <label class="chip"><input type="radio" name="type" value="Любое" checked /> Любое</label>
             <div class="row">
-              <label class="chip"><input type="radio" name="type" value="flat" /> Квартира</label>
-              <label class="chip"><input type="radio" name="type" value="room" /> Комната</label>
-              <label class="chip"><input type="radio" name="type" value="unit" /> Номер</label>
-              <label class="chip"><input type="radio" name="type" value="flat1" /> Однокомнатная квартира</label>
-              <label class="chip"><input type="radio" name="type" value="bed" /> Спальное место</label>
+              <label class="chip"><input type="radio" name="type" value="Квартира" /> Квартира</label>
+              <label class="chip"><input type="radio" name="type" value="Комната" /> Комната</label>
+              <label class="chip"><input type="radio" name="type" value="Номер" /> Номер</label>
+              <label class="chip"><input type="radio" name="type" value="Однокомнатная квартира" /> Однокомнатная квартира</label>
+              <label class="chip"><input type="radio" name="type" value="Спальное место" /> Спальное место</label>
             </div>
           </div>
         </div>
@@ -235,15 +235,19 @@
 
       function collectPayload() {
         const payload = {};
-        const type = document.querySelector('input[name="type"]:checked')?.value || 'any';
-        if (type && type !== 'any') payload.type = type;
+        const type = document.querySelector('input[name="type"]:checked')?.value || 'Любое';
+        payload.type = type;
 
         const vMin = parseInt(document.getElementById('price_min').value, 10);
         const vMax = parseInt(document.getElementById('price_max').value, 10);
         if (!isNaN(vMin) && vMin > 0) payload.price_min = vMin;
         if (!isNaN(vMax) && vMax > 0) payload.price_max = vMax;
 
-        const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => i.value);
+        const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => {
+          if (i.value === 'inside') return 'Внутри кольца';
+          const n = parseInt(i.value, 10);
+          return isNaN(n) ? i.value : n;
+        });
         if (rings.length) payload.rings = rings;
 
         // Метро: только чекбоксы внутри блока со списком метро
