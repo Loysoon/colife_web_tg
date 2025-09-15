@@ -169,17 +169,16 @@
           alert('Проверьте поля цены: "До" не может быть меньше "От"');
           return;
         }
-        // Заглушка: просто уведомление и вывод в консоль
         const payload = collectPayload();
         console.log('Filters payload:', payload);
         try {
           if (tg?.sendData) {
             tg.sendData(JSON.stringify(payload));
           }
-          alert('Фильтры отправлены в бота.');
+          alert('Фильтры успешно сохранены.');
         } catch (e) {
           console.error('sendData error', e);
-          alert('Не удалось отправить данные в бота');
+          alert('Не удалось сохранить фильтры');
         }
         if (tg) tg.close();
       });
@@ -235,12 +234,23 @@
       priceMaxEl.addEventListener('blur', () => { cleanupOnBlur(priceMaxEl); validateRange(); });
 
       function collectPayload() {
+        const payload = {};
         const type = document.querySelector('input[name="type"]:checked')?.value || 'any';
-        const price_min = Number(document.getElementById('price_min').value || 0);
-        const price_max = Number(document.getElementById('price_max').value || 0);
+        if (type && type !== 'any') payload.type = type;
+
+        const vMin = parseInt(document.getElementById('price_min').value, 10);
+        const vMax = parseInt(document.getElementById('price_max').value, 10);
+        if (!isNaN(vMin) && vMin > 0) payload.price_min = vMin;
+        if (!isNaN(vMax) && vMax > 0) payload.price_max = vMax;
+
         const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => i.value);
-        const metros = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value);
-        return { type, price_min, price_max, rings, metros };
+        if (rings.length) payload.rings = rings;
+
+        // Метро: только чекбоксы внутри блока со списком метро
+        const metros = Array.from(document.querySelectorAll('.checkboxes input[type="checkbox"]:checked')).map(i => i.value);
+        if (metros.length) payload.metros = metros;
+
+        return payload;
       }
     </script>
   </body>
