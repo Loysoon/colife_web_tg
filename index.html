@@ -155,24 +155,6 @@
         tg.expand();
       }
 
-      // Тест: показать фильтры, переданные через ?filters=
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const raw = params.get('filters');
-        if (raw) {
-          const decoded = decodeURIComponent(raw);
-          // Попробуем распарсить JSON, если это JSON; иначе покажем как есть
-          try {
-            const obj = JSON.parse(decoded);
-            alert('Полученные фильтры:\n' + JSON.stringify(obj, null, 2));
-          } catch (_) {
-            alert('Полученные фильтры (raw):\n' + decoded);
-          }
-        }
-      } catch (e) {
-        console.error('Ошибка разбора параметров URL', e);
-      }
-
       document.getElementById('resetBtn').addEventListener('click', () => {
         document.querySelector('input[name="type"][value="any"]').checked = true;
         document.getElementById('price_min').value = '';
