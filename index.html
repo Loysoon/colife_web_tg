@@ -138,11 +138,22 @@
         <div class="section">
           <h2>Удаленность от кольцевой линии</h2>
           <div class="row">
+            <label class="chip"><input type="checkbox" id="ring_any" /> Любое</label>
             <label class="chip"><input type="checkbox" name="ring" value="1" /> 1</label>
             <label class="chip"><input type="checkbox" name="ring" value="2" /> 2</label>
             <label class="chip"><input type="checkbox" name="ring" value="3" /> 3</label>
             <label class="chip"><input type="checkbox" name="ring" value="4" /> 4</label>
+            <label class="chip"><input type="checkbox" name="ring" value="5" /> 5</label>
             <label class="chip"><input type="checkbox" name="ring" value="6" /> 6</label>
+            <label class="chip"><input type="checkbox" name="ring" value="7" /> 7</label>
+            <label class="chip"><input type="checkbox" name="ring" value="8" /> 8</label>
+            <label class="chip"><input type="checkbox" name="ring" value="9" /> 9</label>
+            <label class="chip"><input type="checkbox" name="ring" value="10" /> 10</label>
+            <label class="chip"><input type="checkbox" name="ring" value="11" /> 11</label>
+            <label class="chip"><input type="checkbox" name="ring" value="12" /> 12</label>
+            <label class="chip"><input type="checkbox" name="ring" value="13" /> 13</label>
+            <label class="chip"><input type="checkbox" name="ring" value="14" /> 14</label>
+            <label class="chip"><input type="checkbox" name="ring" value="15" /> 15</label>
             <label class="chip"><input type="checkbox" name="ring" value="inside" /> Внутри кольца</label>
           </div>
         </div>
@@ -191,6 +202,8 @@
 
       document.getElementById('resetBtn').addEventListener('click', () => {
         document.querySelector('input[name="type"][value="Любое"]').checked = true;
+        const ringAnyEl = document.getElementById('ring_any');
+        if (ringAnyEl) ringAnyEl.checked = true;
         document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
         document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(i => i.checked = false);
         // сбросим диапазон цены к дефолтным
@@ -302,12 +315,17 @@
           if (typeof data.price_max === 'number' && data.price_max > 0) maxV = data.price_max;
           setPriceRanges(minV, maxV);
 
-          // Удаленность от кольцевой: значения на странице 1,2,3,4,6,inside
+          // Удаленность от кольцевой: если пусто — считаем Любое
+          const ringAnyEl = document.getElementById('ring_any');
           if (Array.isArray(data.rings) && data.rings.length) {
             const normalized = new Set(data.rings.map(v => (v === 'Внутри кольца' ? 'inside' : String(v))));
             document.querySelectorAll('input[name="ring"]').forEach(i => {
               i.checked = normalized.has(i.value);
             });
+            if (ringAnyEl) ringAnyEl.checked = false;
+          } else {
+            if (ringAnyEl) ringAnyEl.checked = true;
+            document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
           }
 
           // Линии метро
@@ -332,12 +350,15 @@
         if (!isNaN(vMin) && vMin > 0) payload.price_min = vMin;
         if (!isNaN(vMax) && vMax > 0) payload.price_max = vMax;
 
-        const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => {
-          if (i.value === 'inside') return 'Внутри кольца';
-          const n = parseInt(i.value, 10);
-          return isNaN(n) ? i.value : n;
-        });
-        if (rings.length) payload.rings = rings;
+        const ringAnyEl = document.getElementById('ring_any');
+        if (!(ringAnyEl && ringAnyEl.checked)) {
+          const rings = Array.from(document.querySelectorAll('input[name="ring"]:checked')).map(i => {
+            if (i.value === 'inside') return 'Внутри кольца';
+            const n = parseInt(i.value, 10);
+            return isNaN(n) ? i.value : n;
+          });
+          if (rings.length) payload.rings = rings;
+        }
 
         // Метро: только чекбоксы внутри блока со списком метро
         const metros = Array.from(document.querySelectorAll('.checkboxes input[type="checkbox"]:checked')).map(i => i.value);
@@ -348,6 +369,29 @@
 
       // Применить фильтры из URL при загрузке
       applyFiltersFromUrl();
+
+      // Логика: "Любое" для удаленности ↔ конкретные значения
+      (function bindRingAnyLogic(){
+        const ringAnyEl = document.getElementById('ring_any');
+        if (!ringAnyEl) return;
+        ringAnyEl.checked = true; // по умолчанию
+        ringAnyEl.addEventListener('change', () => {
+          if (ringAnyEl.checked) {
+            // Включили «Любое» — снимаем конкретные значения
+            document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
+          } else {
+            // Пользователь попытался снять «Любое». Если ничего другого не выбрано — не даём снять
+            const anyChecked = Array.from(document.querySelectorAll('input[name="ring"]:checked')).length > 0;
+            if (!anyChecked) ringAnyEl.checked = true;
+          }
+        });
+        document.querySelectorAll('input[name="ring"]').forEach(i => {
+          i.addEventListener('change', () => {
+            const anyChecked = Array.from(document.querySelectorAll('input[name=\"ring\"]:checked')).length > 0;
+            ringAnyEl.checked = !anyChecked;
+          });
+        });
+      })();
     </script>
   </body>
   </html>
