@@ -374,7 +374,8 @@
       (function bindRingAnyLogic(){
         const ringAnyEl = document.getElementById('ring_any');
         if (!ringAnyEl) return;
-        ringAnyEl.checked = true; // по умолчанию
+        // начальное состояние: если ничего не выбрано — "Любое"
+        ringAnyEl.checked = Array.from(document.querySelectorAll('input[name="ring"]:checked')).length === 0;
         ringAnyEl.addEventListener('change', () => {
           if (ringAnyEl.checked) {
             // Включили «Любое» — снимаем конкретные значения
