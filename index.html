@@ -109,13 +109,13 @@
         <div class="section">
           <h2>Тип жилья</h2>
           <div class="group">
-            <label class="chip"><input type="radio" name="type" value="Любое" checked /> Любое</label>
             <div class="row">
-              <label class="chip"><input type="radio" name="type" value="Квартира" /> Квартира</label>
-              <label class="chip"><input type="radio" name="type" value="Комната" /> Комната</label>
-              <label class="chip"><input type="radio" name="type" value="Номер" /> Номер</label>
-              <label class="chip"><input type="radio" name="type" value="Однокомнатная квартира" /> Однокомнатная квартира</label>
-              <label class="chip"><input type="radio" name="type" value="Спальное место" /> Спальное место</label>
+              <label class="chip"><input type="checkbox" id="type_any" /> Любое</label>
+              <label class="chip"><input type="checkbox" name="type_multi" value="Квартира" /> Квартира</label>
+              <label class="chip"><input type="checkbox" name="type_multi" value="Комната" /> Комната</label>
+              <label class="chip"><input type="checkbox" name="type_multi" value="Номер" /> Номер</label>
+              <label class="chip"><input type="checkbox" name="type_multi" value="Однокомнатная квартира" /> Однокомнатная квартира</label>
+              <label class="chip"><input type="checkbox" name="type_multi" value="Спальное место" /> Спальное место</label>
             </div>
           </div>
         </div>
@@ -301,11 +301,22 @@
             return;
           }
 
-          // Тип жилья (значения на русском)
-          if (data.type) {
-            const radios = Array.from(document.querySelectorAll('input[name="type"]'));
-            const match = radios.find(r => r.value === String(data.type));
-            if (match) match.checked = true;
+          // Тип жилья: поддержка старого поля type и множественного выбора
+          const typeAnyEl = document.getElementById('type_any');
+          const selectedTypes = Array.isArray(data.types) ? data.types.map(String) : [];
+          if (selectedTypes.length) {
+            const set = new Set(selectedTypes);
+            document.querySelectorAll('input[name="type_multi"]').forEach(i => i.checked = set.has(i.value));
+            if (typeAnyEl) typeAnyEl.checked = false;
+          } else if (typeof data.type === 'string') {
+            if (data.type === 'Любое') {
+              if (typeAnyEl) typeAnyEl.checked = true;
+            } else {
+              document.querySelectorAll('input[name="type_multi"]').forEach(i => i.checked = (i.value === data.type));
+              if (typeAnyEl) typeAnyEl.checked = false;
+            }
+          } else {
+            if (typeAnyEl) typeAnyEl.checked = true;
           }
 
           // Цена — восстановим положения бегунков
@@ -342,8 +353,18 @@
 
       function collectPayload() {
         const payload = {};
-        const type = document.querySelector('input[name="type"]:checked')?.value || 'Любое';
-        payload.type = type;
+        // Тип жилья: возвращаем либо 'type: Любое', либо одиночный type, либо массив types
+        const typeAnyEl = document.getElementById('type_any');
+        const types = Array.from(document.querySelectorAll('input[name="type_multi"]:checked')).map(i => i.value);
+        if (typeAnyEl && typeAnyEl.checked) {
+          payload.type = 'Любое';
+        } else if (types.length === 1) {
+          payload.type = types[0];
+        } else if (types.length > 1) {
+          payload.types = types;
+        } else {
+          payload.type = 'Любое';
+        }
 
         const vMin = parseInt(minRangeEl.value, 10);
         const vMax = parseInt(maxRangeEl.value, 10);
@@ -390,6 +411,28 @@
           i.addEventListener('change', () => {
             const anyChecked = Array.from(document.querySelectorAll('input[name=\"ring\"]:checked')).length > 0;
             ringAnyEl.checked = !anyChecked;
+          });
+        });
+      })();
+
+      // Логика: "Любое" для типа жилья ↔ конкретные значения
+      (function bindTypeAnyLogic(){
+        const typeAnyEl = document.getElementById('type_any');
+        if (!typeAnyEl) return;
+        // начальное состояние: если ничего не выбрано — "Любое"
+        typeAnyEl.checked = Array.from(document.querySelectorAll('input[name="type_multi"]:checked')).length === 0;
+        typeAnyEl.addEventListener('change', () => {
+          if (typeAnyEl.checked) {
+            document.querySelectorAll('input[name="type_multi"]').forEach(i => i.checked = false);
+          } else {
+            const anyChecked = Array.from(document.querySelectorAll('input[name="type_multi"]:checked')).length > 0;
+            if (!anyChecked) typeAnyEl.checked = true;
+          }
+        });
+        document.querySelectorAll('input[name="type_multi"]').forEach(i => {
+          i.addEventListener('change', () => {
+            const anyChecked = Array.from(document.querySelectorAll('input[name=\"type_multi\"]:checked')).length > 0;
+            typeAnyEl.checked = !anyChecked;
           });
         });
       })();
