@@ -72,6 +72,33 @@
         background: rgba(231, 76, 60, 0.08) !important;
       }
       .metro-icon { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 6px; }
+      /* Диапазон цены: один слайдер, два бегунка, активная заливка между ними */
+      .range-slider { position: relative; height: 44px; }
+      .range-slider input[type="range"] {
+        -webkit-appearance: none; appearance: none;
+        position: absolute; left: 0; right: 0; width: 100%;
+        top: 50%; transform: translateY(-50%);
+        height: 6px; margin: 0; background: transparent; pointer-events: none;
+      }
+      /* прячем стандартные треки */
+      .range-slider input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: transparent; border: 0; }
+      .range-slider input[type="range"]::-moz-range-track { height: 6px; background: transparent; border: 0; }
+      /* стили бегунков */
+      .range-slider input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; pointer-events: all;
+        position: relative; z-index: 3; width: 16px; height: 16px; border-radius: 50%;
+        background: var(--tg-theme-button-color, #1f6feb); border: 2px solid #ffffff; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+        margin-top: -5px; /* центрируем на треке 6px */
+      }
+      .range-slider input[type="range"]::-moz-range-thumb {
+        pointer-events: all; position: relative; z-index: 3; width: 16px; height: 16px; border-radius: 50%;
+        background: var(--tg-theme-button-color, #1f6feb); border: 2px solid #ffffff; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+        margin-top: -5px;
+      }
+      .range-slider #price_min_range { z-index: 4; }
+      .range-slider #price_max_range { z-index: 3; }
+      .range-track { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 6px; background: var(--tg-theme-hint-color, #e5e7eb); border-radius: 999px; z-index: 1; }
+      .range-active { position: absolute; height: 100%; background: var(--tg-theme-button-color, #1f6feb); border-radius: 999px; z-index: 2; }
     </style>
   </head>
   <body>
@@ -95,9 +122,16 @@
 
         <div class="section">
           <h2>Цена, ₽</h2>
-          <div class="grid-2">
-            <input type="number" id="price_min" placeholder="От" min="1" step="1" />
-            <input type="number" id="price_max" placeholder="До" min="1" step="1" />
+          <div class="group">
+            <div class="row">
+              <span>От: <strong id="price_min_value">—</strong></span>
+              <span>До: <strong id="price_max_value">—</strong></span>
+            </div>
+            <div class="range-slider">
+              <div class="range-track"><div class="range-active" id="price_range_active"></div></div>
+              <input type="range" id="price_min_range" min="10000" max="200000" step="1000" />
+              <input type="range" id="price_max_range" min="10000" max="200000" step="1000" />
+            </div>
           </div>
         </div>
 
@@ -108,17 +142,7 @@
             <label class="chip"><input type="checkbox" name="ring" value="2" /> 2</label>
             <label class="chip"><input type="checkbox" name="ring" value="3" /> 3</label>
             <label class="chip"><input type="checkbox" name="ring" value="4" /> 4</label>
-            <label class="chip"><input type="checkbox" name="ring" value="4" /> 5</label>
             <label class="chip"><input type="checkbox" name="ring" value="6" /> 6</label>
-            <label class="chip"><input type="checkbox" name="ring" value="1" /> 7</label>
-            <label class="chip"><input type="checkbox" name="ring" value="2" /> 8</label>
-            <label class="chip"><input type="checkbox" name="ring" value="3" /> 9</label>
-            <label class="chip"><input type="checkbox" name="ring" value="4" /> 10</label>
-            <label class="chip"><input type="checkbox" name="ring" value="4" /> 11</label>
-            <label class="chip"><input type="checkbox" name="ring" value="6" /> 12</label>
-            <label class="chip"><input type="checkbox" name="ring" value="4" /> 13</label>
-            <label class="chip"><input type="checkbox" name="ring" value="4" /> 14</label>
-            <label class="chip"><input type="checkbox" name="ring" value="6" /> 15</label>
             <label class="chip"><input type="checkbox" name="ring" value="inside" /> Внутри кольца</label>
           </div>
         </div>
@@ -167,12 +191,10 @@
 
       document.getElementById('resetBtn').addEventListener('click', () => {
         document.querySelector('input[name="type"][value="Любое"]').checked = true;
-        document.getElementById('price_min').value = '';
-        document.getElementById('price_max').value = '';
         document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
         document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(i => i.checked = false);
-        document.getElementById('price_min').classList.remove('input-error');
-        document.getElementById('price_max').classList.remove('input-error');
+        // сбросим диапазон цены к дефолтным
+        setPriceRanges(DEFAULT_MIN_PRICE, DEFAULT_MAX_PRICE);
       });
 
       document.getElementById('saveBtn').addEventListener('click', () => {
@@ -193,55 +215,64 @@
         if (tg) tg.close();
       });
 
-      // Валидация цен: запрещаем 0/отрицательные и подсвечиваем логическую ошибку (от > до)
-      const priceMinEl = document.getElementById('price_min');
-      const priceMaxEl = document.getElementById('price_max');
+      // Диапазон цены: двойной бегунок на одной полосе
+      const DEFAULT_MIN_PRICE = 10000;
+      const DEFAULT_MAX_PRICE = 200000;
+      const minRangeEl = document.getElementById('price_min_range');
+      const maxRangeEl = document.getElementById('price_max_range');
+      const minValueEl = document.getElementById('price_min_value');
+      const maxValueEl = document.getElementById('price_max_value');
+      const activeTrackEl = document.getElementById('price_range_active');
 
-      function clampPositive(el) {
-        const v = parseInt(el.value, 10);
-        if (isNaN(v) || v <= 0) {
-          el.classList.add('input-error');
-        } else {
-          el.classList.remove('input-error');
-        }
+      function formatPrice(v) { return Number(v).toLocaleString('ru-RU'); }
+
+      function setPriceRanges(minV, maxV) {
+        const minAttr = parseInt(minRangeEl.min, 10);
+        const maxAttr = parseInt(minRangeEl.max, 10);
+        const step = parseInt(minRangeEl.step, 10) || 1;
+        minV = Math.max(minAttr, Math.min(maxAttr, Math.round(minV / step) * step));
+        maxV = Math.max(minAttr, Math.min(maxAttr, Math.round(maxV / step) * step));
+        if (minV > maxV) [minV, maxV] = [maxV, minV];
+        minRangeEl.value = String(minV);
+        maxRangeEl.value = String(maxV);
+        updateRangeUI();
       }
 
-      function validateRange() {
-        const vMin = parseInt(priceMinEl.value, 10);
-        const vMax = parseInt(priceMaxEl.value, 10);
-        // убираем прошлую подсветку
-        priceMinEl.classList.remove('input-error');
-        priceMaxEl.classList.remove('input-error');
-        // если введены оба и логика нарушена — подсветить оба
-        if (!isNaN(vMin) && !isNaN(vMax) && vMax < vMin) {
-          priceMinEl.classList.add('input-error');
-          priceMaxEl.classList.add('input-error');
-        }
+      function updateRangeUI() {
+        const min = parseInt(minRangeEl.value, 10);
+        const max = parseInt(maxRangeEl.value, 10);
+        minValueEl.textContent = formatPrice(min);
+        maxValueEl.textContent = formatPrice(max);
+        const minAttr = parseInt(minRangeEl.min, 10);
+        const maxAttr = parseInt(minRangeEl.max, 10);
+        const total = maxAttr - minAttr;
+        const leftPct = ((min - minAttr) / total) * 100;
+        const rightPct = ((max - minAttr) / total) * 100;
+        activeTrackEl.style.left = leftPct + '%';
+        activeTrackEl.style.width = (rightPct - leftPct) + '%';
       }
 
       function isPriceRangeValid() {
-        const vMin = parseInt(priceMinEl.value, 10);
-        const vMax = parseInt(priceMaxEl.value, 10);
-        // Пустые поля считаем валидными (нет фильтра) — проверяем только если оба заданы
-        if (isNaN(vMin) && isNaN(vMax)) return true;
-        if (!isNaN(vMin) && vMin <= 0) return false;
-        if (!isNaN(vMax) && vMax <= 0) return false;
-        if (!isNaN(vMin) && !isNaN(vMax) && vMax < vMin) return false;
-        return true;
+        const vMin = parseInt(minRangeEl.value, 10);
+        const vMax = parseInt(maxRangeEl.value, 10);
+        return vMax >= vMin;
       }
 
-      function cleanupOnBlur(el) {
-        const v = parseInt(el.value, 10);
-        if (isNaN(v) || v <= 0) {
-          el.value = '';
-          el.classList.remove('input-error');
-        }
-      }
+      minRangeEl.addEventListener('input', () => {
+        const min = parseInt(minRangeEl.value, 10);
+        const max = parseInt(maxRangeEl.value, 10);
+        if (min > max) { maxRangeEl.value = String(min); }
+        updateRangeUI();
+      });
+      maxRangeEl.addEventListener('input', () => {
+        const min = parseInt(minRangeEl.value, 10);
+        const max = parseInt(maxRangeEl.value, 10);
+        if (max < min) { minRangeEl.value = String(max); }
+        updateRangeUI();
+      });
 
-      priceMinEl.addEventListener('input', () => { clampPositive(priceMinEl); validateRange(); });
-      priceMaxEl.addEventListener('input', () => { clampPositive(priceMaxEl); validateRange(); });
-      priceMinEl.addEventListener('blur', () => { cleanupOnBlur(priceMinEl); validateRange(); });
-      priceMaxEl.addEventListener('blur', () => { cleanupOnBlur(priceMaxEl); validateRange(); });
+      // инициализация
+      setPriceRanges(DEFAULT_MIN_PRICE, DEFAULT_MAX_PRICE);
 
       // Применение фильтров, переданных через ?filters=
       function applyFiltersFromUrl() {
@@ -264,12 +295,12 @@
             if (match) match.checked = true;
           }
 
-          // Цена
-          if (typeof data.price_min === 'number' && data.price_min > 0) priceMinEl.value = String(data.price_min);
-          if (typeof data.price_max === 'number' && data.price_max > 0) priceMaxEl.value = String(data.price_max);
-          validateRange();
-          priceMinEl.classList.remove('input-error');
-          priceMaxEl.classList.remove('input-error');
+          // Цена — восстановим положения бегунков
+          let minV = DEFAULT_MIN_PRICE;
+          let maxV = DEFAULT_MAX_PRICE;
+          if (typeof data.price_min === 'number' && data.price_min > 0) minV = data.price_min;
+          if (typeof data.price_max === 'number' && data.price_max > 0) maxV = data.price_max;
+          setPriceRanges(minV, maxV);
 
           // Удаленность от кольцевой: значения на странице 1,2,3,4,6,inside
           if (Array.isArray(data.rings) && data.rings.length) {
@@ -296,8 +327,8 @@
         const type = document.querySelector('input[name="type"]:checked')?.value || 'Любое';
         payload.type = type;
 
-        const vMin = parseInt(document.getElementById('price_min').value, 10);
-        const vMax = parseInt(document.getElementById('price_max').value, 10);
+        const vMin = parseInt(minRangeEl.value, 10);
+        const vMax = parseInt(maxRangeEl.value, 10);
         if (!isNaN(vMin) && vMin > 0) payload.price_min = vMin;
         if (!isNaN(vMax) && vMax > 0) payload.price_max = vMax;
 
@@ -320,7 +351,5 @@
     </script>
   </body>
   </html>
-
-
 
 
