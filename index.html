@@ -201,12 +201,20 @@
       }
 
       document.getElementById('resetBtn').addEventListener('click', () => {
-        document.querySelector('input[name="type"][value="Любое"]').checked = true;
+        // Тип жилья — вернуть "Любое"
+        const typeAnyEl = document.getElementById('type_any');
+        if (typeAnyEl) typeAnyEl.checked = true;
+        document.querySelectorAll('input[name="type_multi"]').forEach(i => i.checked = false);
+
+        // Удалённость — вернуть "Любое"
         const ringAnyEl = document.getElementById('ring_any');
         if (ringAnyEl) ringAnyEl.checked = true;
         document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
+
+        // Метро — очистить
         document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(i => i.checked = false);
-        // сбросим диапазон цены к дефолтным
+
+        // Цена — вернуть к дефолту
         setPriceRanges(DEFAULT_MIN_PRICE, DEFAULT_MAX_PRICE);
       });
 
