@@ -129,8 +129,8 @@
             </div>
             <div class="range-slider">
               <div class="range-track"><div class="range-active" id="price_range_active"></div></div>
-              <input type="range" id="price_min_range" min="10000" max="200000" step="1000" />
-              <input type="range" id="price_max_range" min="10000" max="200000" step="1000" />
+              <input type="range" id="price_min_range" min="0" max="200000" step="1000" />
+              <input type="range" id="price_max_range" min="0" max="200000" step="1000" />
             </div>
           </div>
         </div>
@@ -237,7 +237,7 @@
       });
 
       // Диапазон цены: двойной бегунок на одной полосе
-      const DEFAULT_MIN_PRICE = 10000;
+      const DEFAULT_MIN_PRICE = 0;
       const DEFAULT_MAX_PRICE = 200000;
       const minRangeEl = document.getElementById('price_min_range');
       const maxRangeEl = document.getElementById('price_max_range');
