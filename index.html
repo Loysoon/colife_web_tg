@@ -160,29 +160,30 @@
 
         <div class="section">
           <h2>Линия метро</h2>
-          <div class="scroll checkboxes">
-            <label><input type="checkbox" value="Сокольническая" /> <img class="metro-icon" src="metro_icons/sokolnicheskaya.png" alt="">Сокольническая</label>
-            <label><input type="checkbox" value="Замоскворецкая" /> <img class="metro-icon" src="metro_icons/zamoskvoretskaya.png" alt="">Замоскворецкая</label>
-            <label><input type="checkbox" value="Арбатско-Покровская" /> <img class="metro-icon" src="metro_icons/arbatsko-pokrovskaya.png" alt="">Арбатско-Покровская</label>
-            <label><input type="checkbox" value="Филёвская" /> <img class="metro-icon" src="metro_icons/filevskaya.png" alt="">Филёвская</label>
-            <label><input type="checkbox" value="Кольцевая" /> <img class="metro-icon" src="metro_icons/kolcevaya.png" alt="">Кольцевая</label>
-            <label><input type="checkbox" value="Калужско-Рижская" /> <img class="metro-icon" src="metro_icons/kaluzhsko-rizhskaya.png" alt="">Калужско-Рижская</label>
-            <label><input type="checkbox" value="Таганско-Краснопресненская" /> <img class="metro-icon" src="metro_icons/tagansko-krasnopresnenskaya.png" alt="">Таганско-Краснопресненская</label>
-            <label><input type="checkbox" value="Калининская" /> <img class="metro-icon" src="metro_icons/kalininskaya.png" alt="">Калининская</label>
-            <label><input type="checkbox" value="Солнцевская" /> <img class="metro-icon" src="metro_icons/solncevskaya.png" alt="">Солнцевская</label>
-            <label><input type="checkbox" value="Серпуховско-Тимирязевская" /> <img class="metro-icon" src="metro_icons/serpuhovsko-timiryazevskaya.png" alt="">Серпуховско-Тимирязевская</label>
-            <label><input type="checkbox" value="Люблинско-Дмитровская" /> <img class="metro-icon" src="metro_icons/lyublinsko-dmitrovskaya.png" alt="">Люблинско-Дмитровская</label>
-            <label><input type="checkbox" value="Большая кольцевая" /> <img class="metro-icon" src="metro_icons/bolshaya-kolcevaya.png" alt="">Большая кольцевая</label>
-            <label><input type="checkbox" value="Бутовская" /> <img class="metro-icon" src="metro_icons/butovskaya.png" alt="">Бутовская</label>
-            <label><input type="checkbox" value="Московское центральное кольцо" /> <img class="metro-icon" src="metro_icons/mck.png" alt="">Московское центральное кольцо</label>
-            <label><input type="checkbox" value="Некрасовская" /> <img class="metro-icon" src="metro_icons/nekrasovskaya.png" alt="">Некрасовская</label>
-            <label><input type="checkbox" value="Троицкая" /> <img class="metro-icon" src="metro_icons/troickaya.png" alt="">Троицкая</label>
-            <label><input type="checkbox" value="Рублёво-Архангельская" /> <img class="metro-icon" src="metro_icons/rublovo-arhangelskaya.png" alt="">Рублёво-Архангельская</label>
-            <label><input type="checkbox" value="Бирюлёвская" /> <img class="metro-icon" src="metro_icons/biryulevskaya.png" alt="">Бирюлёвская</label>
-            <label><input type="checkbox" value="МЦД1" /> <img class="metro-icon" src="metro_icons/mcd1.png" alt="">МЦД1</label>
-            <label><input type="checkbox" value="МЦД2" /> <img class="metro-icon" src="metro_icons/mcd2.png" alt="">МЦД2</label>
-            <label><input type="checkbox" value="МЦД3" /> <img class="metro-icon" src="metro_icons/mcd3.png" alt="">МЦД3</label>
-            <label><input type="checkbox" value="МЦД4" /> <img class="metro-icon" src="metro_icons/mcd4.png" alt="">МЦД4</label>
+          <div class="scroll checkboxes" id="metro_checkboxes">
+            <label><input type="checkbox" id="metro_any" /> Любое</label>
+            <label><input type="checkbox" name="metro" value="Сокольническая" /> <img class="metro-icon" src="metro_icons/sokolnicheskaya.png" alt="">Сокольническая</label>
+            <label><input type="checkbox" name="metro" value="Замоскворецкая" /> <img class="metro-icon" src="metro_icons/zamoskvoretskaya.png" alt="">Замоскворецкая</label>
+            <label><input type="checkbox" name="metro" value="Арбатско-Покровская" /> <img class="metro-icon" src="metro_icons/arbatsko-pokrovskaya.png" alt="">Арбатско-Покровская</label>
+            <label><input type="checkbox" name="metro" value="Филёвская" /> <img class="metro-icon" src="metro_icons/filevskaya.png" alt="">Филёвская</label>
+            <label><input type="checkbox" name="metro" value="Кольцевая" /> <img class="metro-icon" src="metro_icons/kolcevaya.png" alt="">Кольцевая</label>
+            <label><input type="checkbox" name="metro" value="Калужско-Рижская" /> <img class="metro-icon" src="metro_icons/kaluzhsko-rizhskaya.png" alt="">Калужско-Рижская</label>
+            <label><input type="checkbox" name="metro" value="Таганско-Краснопресненская" /> <img class="metro-icon" src="metro_icons/tagansko-krasnopresnenskaya.png" alt="">Таганско-Краснопресненская</label>
+            <label><input type="checkbox" name="metro" value="Калининская" /> <img class="metro-icon" src="metro_icons/kalininskaya.png" alt="">Калининская</label>
+            <label><input type="checkbox" name="metro" value="Солнцевская" /> <img class="metro-icon" src="metro_icons/solncevskaya.png" alt="">Солнцевская</label>
+            <label><input type="checkbox" name="metro" value="Серпуховско-Тимирязевская" /> <img class="metro-icon" src="metro_icons/serpuhovsko-timiryazevskaya.png" alt="">Серпуховско-Тимирязевская</label>
+            <label><input type="checkbox" name="metro" value="Люблинско-Дмитровская" /> <img class="metro-icon" src="metro_icons/lyublinsko-dmitrovskaya.png" alt="">Люблинско-Дмитровская</label>
+            <label><input type="checkbox" name="metro" value="Большая кольцевая" /> <img class="metro-icon" src="metro_icons/bolshaya-kolcevaya.png" alt="">Большая кольцевая</label>
+            <label><input type="checkbox" name="metro" value="Бутовская" /> <img class="metro-icon" src="metro_icons/butovskaya.png" alt="">Бутовская</label>
+            <label><input type="checkbox" name="metro" value="Московское центральное кольцо" /> <img class="metro-icon" src="metro_icons/mck.png" alt="">Московское центральное кольцо</label>
+            <label><input type="checkbox" name="metro" value="Некрасовская" /> <img class="metro-icon" src="metro_icons/nekrasovskaya.png" alt="">Некрасовская</label>
+            <label><input type="checkbox" name="metro" value="Троицкая" /> <img class="metro-icon" src="metro_icons/troickaya.png" alt="">Троицкая</label>
+            <label><input type="checkbox" name="metro" value="Рублёво-Архангельская" /> <img class="metro-icon" src="metro_icons/rublovo-arhangelskaya.png" alt="">Рублёво-Архангельская</label>
+            <label><input type="checkbox" name="metro" value="Бирюлёвская" /> <img class="metro-icon" src="metro_icons/biryulevskaya.png" alt="">Бирюлёвская</label>
+            <label><input type="checkbox" name="metro" value="МЦД1" /> <img class="metro-icon" src="metro_icons/mcd1.png" alt="">МЦД1</label>
+            <label><input type="checkbox" name="metro" value="МЦД2" /> <img class="metro-icon" src="metro_icons/mcd2.png" alt="">МЦД2</label>
+            <label><input type="checkbox" name="metro" value="МЦД3" /> <img class="metro-icon" src="metro_icons/mcd3.png" alt="">МЦД3</label>
+            <label><input type="checkbox" name="metro" value="МЦД4" /> <img class="metro-icon" src="metro_icons/mcd4.png" alt="">МЦД4</label>
           </div>
         </div>
 
@@ -200,6 +201,7 @@
         tg.expand();
       }
 
+      // ИСПРАВЛЕНИЕ 1: Функция сброса теперь правильно устанавливает "Любое" для всех секций
       document.getElementById('resetBtn').addEventListener('click', () => {
         // Тип жилья — вернуть "Любое"
         const typeAnyEl = document.getElementById('type_any');
@@ -211,8 +213,10 @@
         if (ringAnyEl) ringAnyEl.checked = true;
         document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
 
-        // Метро — очистить
-        document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(i => i.checked = false);
+        // ИСПРАВЛЕНИЕ 2: Метро — теперь правильно сбрасывается и активируется "Любое"
+        const metroAnyEl = document.getElementById('metro_any');
+        if (metroAnyEl) metroAnyEl.checked = true;
+        document.querySelectorAll('input[name="metro"]').forEach(i => i.checked = false);
 
         // Цена — вернуть к дефолту
         setPriceRanges(DEFAULT_MIN_PRICE, DEFAULT_MAX_PRICE);
@@ -347,12 +351,17 @@
             document.querySelectorAll('input[name="ring"]').forEach(i => i.checked = false);
           }
 
-          // Линии метро
+          // ИСПРАВЛЕНИЕ 3: Линии метро - используем правильный селектор
+          const metroAnyEl = document.getElementById('metro_any');
           if (Array.isArray(data.metros) && data.metros.length) {
             const metrosSet = new Set(data.metros.map(String));
-            document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(i => {
+            document.querySelectorAll('input[name="metro"]').forEach(i => {
               i.checked = metrosSet.has(i.value);
             });
+            if (metroAnyEl) metroAnyEl.checked = false;
+          } else {
+            if (metroAnyEl) metroAnyEl.checked = true;
+            document.querySelectorAll('input[name="metro"]').forEach(i => i.checked = false);
           }
         } catch (e) {
           console.error('applyFiltersFromUrl error', e);
@@ -389,9 +398,13 @@
           if (rings.length) payload.rings = rings;
         }
 
-        // Метро: только чекбоксы внутри блока со списком метро
-        const metros = Array.from(document.querySelectorAll('.checkboxes input[type="checkbox"]:checked')).map(i => i.value);
-        if (metros.length) payload.metros = metros;
+        // Метро: только если не выбрано "Любое"
+        const metroAnyEl = document.getElementById('metro_any');
+        if (!(metroAnyEl && metroAnyEl.checked)) {
+          // ИСПРАВЛЕНИЕ 4: Используем правильный селектор для метро
+          const metros = Array.from(document.querySelectorAll('input[name="metro"]:checked')).map(i => i.value);
+          if (metros.length) payload.metros = metros;
+        }
 
         return payload;
       }
@@ -444,8 +457,34 @@
           });
         });
       })();
+
+      // ИСПРАВЛЕНИЕ 5: Логика "Любое" для метро - полностью переписана для правильной работы
+      (function bindMetroAnyLogic(){
+        const metroAnyEl = document.getElementById('metro_any');
+        if (!metroAnyEl) return;
+        
+        // начальное состояние: если ничего не выбрано — "Любое"
+        metroAnyEl.checked = Array.from(document.querySelectorAll('input[name="metro"]:checked')).length === 0;
+        
+        metroAnyEl.addEventListener('change', () => {
+          if (metroAnyEl.checked) {
+            // Включили «Любое» — снимаем конкретные значения
+            document.querySelectorAll('input[name="metro"]').forEach(i => i.checked = false);
+          } else {
+            // Пользователь попытался снять «Любое». Если ничего другого не выбрано — не даём снять
+            const anyChecked = Array.from(document.querySelectorAll('input[name="metro"]:checked')).length > 0;
+            if (!anyChecked) metroAnyEl.checked = true;
+          }
+        });
+        
+        // Обработчики для всех чекбоксов метро
+        document.querySelectorAll('input[name="metro"]').forEach(i => {
+          i.addEventListener('change', () => {
+            const anyChecked = Array.from(document.querySelectorAll('input[name="metro"]:checked')).length > 0;
+            metroAnyEl.checked = !anyChecked;
+          });
+        });
+      })();
     </script>
   </body>
-  </html>
-
-
+</html>
